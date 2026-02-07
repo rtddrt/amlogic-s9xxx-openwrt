@@ -114,33 +114,6 @@ adjust_settings() {
 # If there is a custom package or ipk you would prefer to use create a [ packages ] directory,
 # If one does not exist and place your custom ipk within this directory.
 custom_packages() {
-    cd ${imagebuilder_path}
-    echo -e "${STEPS} Start adding custom packages..."
-
-    # Create a [ packages ] directory
-    [[ -d "packages" ]] || mkdir packages
-    cd packages
-
-    # Download luci-app-amlogic
-    amlogic_api="https://api.github.com/repos/ophub/luci-app-amlogic/releases"
-    #
-    amlogic_plugin="luci-app-amlogic"
-    amlogic_plugin_down="$(curl -s ${amlogic_api} | grep "browser_download_url" | grep -oE "https.*${amlogic_plugin}.*.ipk" | head -n 1)"
-    curl -fsSOJL ${amlogic_plugin_down}
-    [[ "${?}" -eq "0" ]] || error_msg "[ ${amlogic_plugin} ] download failed!"
-    echo -e "${INFO} The [ ${amlogic_plugin} ] is downloaded successfully."
-    #
-    amlogic_i18n="luci-i18n-amlogic"
-    amlogic_i18n_down="$(curl -s ${amlogic_api} | grep "browser_download_url" | grep -oE "https.*${amlogic_i18n}.*.ipk" | head -n 1)"
-    curl -fsSOJL ${amlogic_i18n_down}
-    [[ "${?}" -eq "0" ]] || error_msg "[ ${amlogic_i18n} ] download failed!"
-    echo -e "${INFO} The [ ${amlogic_i18n} ] is downloaded successfully."
-
-    # Download other luci-app-xxx
-    # ......
-
-    sync && sleep 3
-    echo -e "${INFO} [ packages ] directory status: \n$(ls -lh . 2>/dev/null)"
 }
 
 # Add custom packages, lib, theme, app and i18n, etc.
@@ -198,8 +171,6 @@ rebuild_firmware() {
         luci-lib-ip luci-lib-ipkg luci-lib-jsonc luci-lib-nixio luci-mod-admin-full luci-mod-network \
         luci-mod-status luci-mod-system luci-proto-3g luci-proto-ipip luci-proto-ipv6 \
         luci-proto-ncm luci-proto-openconnect luci-proto-ppp luci-proto-qmi luci-proto-relay \
-        \
-        -luci-app-amlogic -luci-i18n-amlogic-zh-cn \
         \
         ${config_list} \
         "
