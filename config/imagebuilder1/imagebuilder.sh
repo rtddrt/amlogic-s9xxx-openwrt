@@ -1,4 +1,3 @@
-#!/bin/bash
 #================================================================================================
 #
 # This file is licensed under the terms of the GNU General Public
@@ -39,10 +38,10 @@
 #
 # Set default parameters
 make_path="${PWD}"
-openwrt_dir="imagebuilder1"
+openwrt_dir="imagebuilder"
 imagebuilder_path="${make_path}/${openwrt_dir}"
-custom_files_path="${make_path}/config/imagebuilder1/files"
-custom_config_file="${make_path}/config/imagebuilder1/config"
+custom_files_path="${make_path}/config/imagebuilder/files"
+custom_config_file="${make_path}/config/imagebuilder/config"
 output_path="${make_path}/output"
 tmp_path="${imagebuilder_path}/tmp"
 unpack_path="${tmp_path}/unpacked_rootfs"
@@ -78,7 +77,7 @@ download_imagebuilder() {
     [[ "${?}" -eq "0" ]] || error_msg "Download failed: [ ${download_file} ]"
 
     # Unzip and change the directory name
-    tar -Jxvf *-imagebuilder-*.tar.xz -C . && sync && rm -f *-imagebuilder-*.tar.xz
+    tar  -Jxvf *-imagebuilder-*.tar.xz -C . && sync && rm -f *-imagebuilder-*.tar.xz
     mv -f *-imagebuilder-* ${openwrt_dir}
 
     sync && sleep 3
@@ -114,6 +113,33 @@ adjust_settings() {
 # If there is a custom package or ipk you would prefer to use create a [ packages ] directory,
 # If one does not exist and place your custom ipk within this directory.
 custom_packages() {
+    cd ${imagebuilder_path}
+    echo -e "${STEPS} Start adding custom packages..."
+
+    # Create a [ packages ] directory
+    [[ -d "packages" ]] || mkdir packages
+    cd packages
+
+    # Download luci-app-amlogic
+    amlogic_api="https://api.github.com/repos/ophub/luci-app-amlogic/releases"
+    #
+    amlogic_plugin="luci-app-amlogic"
+    amlogic_plugin_down="$(curl -s ${amlogic_api} | grep "browser_download_url" | grep -oE "https.*${amlogic_plugin}.*.ipk" | head -n 1)"
+    curl -fsSOJL ${amlogic_plugin_down}
+    [[ "${?}" -eq "0" ]] || error_msg "[ ${amlogic_plugin} ] download failed!"
+    echo -e "${INFO} The [ ${amlogic_plugin} ] is downloaded successfully."
+    #
+    amlogic_i18n="luci-i18n-amlogic"
+    amlogic_i18n_down="$(curl -s ${amlogic_api} | grep "browser_download_url" | grep -oE "https.*${amlogic_i18n}.*.ipk" | head -n 1)"
+    curl -fsSOJL ${amlogic_i18n_down}
+    [[ "${?}" -eq "0" ]] || error_msg "[ ${amlogic_i18n} ] download failed!"
+    echo -e "${INFO} The [ ${amlogic_i18n} ] is downloaded successfully."
+
+    # Download other luci-app-xxx
+    # ......
+
+    sync && sleep 3
+    echo -e "${INFO} [ packages ] directory status: \n$(ls -lh . 2>/dev/null)"
 }
 
 # Add custom packages, lib, theme, app and i18n, etc.
@@ -171,6 +197,8 @@ rebuild_firmware() {
         luci-lib-ip luci-lib-ipkg luci-lib-jsonc luci-lib-nixio luci-mod-admin-full luci-mod-network \
         luci-mod-status luci-mod-system luci-proto-3g luci-proto-ipip luci-proto-ipv6 \
         luci-proto-ncm luci-proto-openconnect luci-proto-ppp luci-proto-qmi luci-proto-relay \
+        \
+        luci-app-amlogic luci-i18n-amlogic-zh-cn \
         \
         ${config_list} \
         "
