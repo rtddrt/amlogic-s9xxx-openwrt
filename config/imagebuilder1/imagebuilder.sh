@@ -39,10 +39,10 @@
 #
 # Set default parameters
 make_path="${PWD}"
-openwrt_dir="imagebuilder"
+openwrt_dir="imagebuilder1"
 imagebuilder_path="${make_path}/${openwrt_dir}"
-custom_files_path="${make_path}/config/imagebuilder/files"
-custom_config_file="${make_path}/config/imagebuilder/config"
+custom_files_path="${make_path}/config/imagebuilder1/files"
+custom_config_file="${make_path}/config/imagebuilder1/config"
 output_path="${make_path}/output"
 tmp_path="${imagebuilder_path}/tmp"
 unpack_path="${tmp_path}/unpacked_rootfs"
