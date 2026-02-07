@@ -1,3 +1,4 @@
+#!/bin/bash
 #================================================================================================
 #
 # This file is licensed under the terms of the GNU General Public
@@ -38,10 +39,10 @@
 #
 # Set default parameters
 make_path="${PWD}"
-openwrt_dir="imagebuilder"
+openwrt_dir="imagebuilder1"
 imagebuilder_path="${make_path}/${openwrt_dir}"
-custom_files_path="${make_path}/config/imagebuilder/files"
-custom_config_file="${make_path}/config/imagebuilder/config"
+custom_files_path="${make_path}/config/imagebuilder1/files"
+custom_config_file="${make_path}/config/imagebuilder1/config"
 output_path="${make_path}/output"
 tmp_path="${imagebuilder_path}/tmp"
 unpack_path="${tmp_path}/unpacked_rootfs"
@@ -77,7 +78,7 @@ download_imagebuilder() {
     [[ "${?}" -eq "0" ]] || error_msg "Download failed: [ ${download_file} ]"
 
     # Unzip and change the directory name
-    tar  -Jxvf *-imagebuilder-*.tar.xz -C . && sync && rm -f *-imagebuilder-*.tar.xz
+    tar -Jxvf *-imagebuilder-*.tar.xz -C . && sync && rm -f *-imagebuilder-*.tar.xz
     mv -f *-imagebuilder-* ${openwrt_dir}
 
     sync && sleep 3
@@ -184,7 +185,7 @@ rebuild_firmware() {
     my_packages="\
         acpid attr base-files bash bc blkid block-mount blockd bsdtar btrfs-progs busybox bzip2 \
         cgi-io chattr comgt comgt-ncm containerd coremark coreutils coreutils-base64 coreutils-nohup \
-        coreutils-truncate curl -docker -docker-compose -dockerd dosfstools dumpe2fs e2freefrag e2fsprogs \
+        coreutils-truncate curl docker docker-compose dockerd dosfstools dumpe2fs e2freefrag e2fsprogs \
         exfat-mkfs f2fs-tools f2fsck fdisk gawk getopt git gzip hostapd-common iconv iw iwinfo jq \
         jshn kmod-brcmfmac kmod-brcmutil kmod-cfg80211 kmod-mac80211 libjson-script liblucihttp \
         liblucihttp-lua losetup lsattr lsblk lscpu mkf2fs mount-utils openssl-util parted \
